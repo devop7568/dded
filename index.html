@@ -1,0 +1,1474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unlimited Claude Access for Claude Code | EcomAgent</title>
+    <meta name="description" content="Claude API alternative for Claude Code with flat monthly pricing, a free trial, custom endpoint setup, and unlimited token">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+            --color-background: #090909;
+            --color-border: #2c2c2c;
+            --color-primary: #f59e0b;
+            --color-primary-hover: #d97706;
+            --color-foreground: #f0f0f0;
+            --color-muted-foreground: #888;
+            --color-success: #22c55e;
+            --color-danger: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+        }
+
+        body {
+            color: var(--color-foreground);
+            font-family: var(--font-sans);
+            background-color: var(--color-background);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            color: #060606;
+            background: var(--color-primary);
+        }
+
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--color-background);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3d3d3d;
+            border-radius: 3px;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(9, 9, 9, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        nav .container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 20px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--color-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #060606;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+
+        .nav-links a {
+            color: #777;
+            text-decoration: none;
+            transition: color 0.15s;
+            font-size: 14px;
+        }
+
+        .nav-links a:hover {
+            color: var(--color-primary);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            color: #060606;
+            cursor: pointer;
+            background-color: var(--color-primary);
+            border: none;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-hover);
+        }
+
+        .btn-outline {
+            color: #aaa;
+            cursor: pointer;
+            background: transparent;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-size: 14px;
+            text-decoration: none;
+            transition: border-color 0.15s, color 0.15s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-outline:hover {
+            color: var(--color-foreground);
+            border-color: #444;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 160px 0 80px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 400px;
+            background: radial-gradient(ellipse at center top, rgba(245, 158, 11, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--color-primary);
+            margin-bottom: 24px;
+        }
+
+        .badge::before {
+            content: '●';
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        h1 {
+            font-size: 56px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        h1 span {
+            color: var(--color-primary);
+        }
+
+        .hero-description {
+            font-size: 18px;
+            color: var(--color-muted-foreground);
+            max-width: 640px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-large {
+            padding: 14px 32px;
+            font-size: 16px;
+        }
+
+        /* Code Window */
+        .code-window {
+            background: #0d0d0d;
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 64px;
+            text-align: left;
+        }
+
+        .code-titlebar {
+            background: #141414;
+            border-bottom: 1px solid #1e1e1e;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .code-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .code-dot.red { background: #ef4444; }
+        .code-dot.yellow { background: #eab308; }
+        .code-dot.green { background: #22c55e; }
+
+        .code-content {
+            padding: 24px;
+            font-family: var(--font-mono);
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+
+        .code-content .comment { color: #6b7280; }
+        .code-content .string { color: #22c55e; }
+        .code-content .key { color: #60a5fa; }
+        .code-content .value { color: #f59e0b; }
+
+        /* Features Section */
+        .features {
+            padding: 80px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-header h2 {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-header p {
+            color: var(--color-muted-foreground);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: #141414;
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 32px;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .feature-card:hover {
+            background: #1c1c1c;
+            border-color: #444;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .feature-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .feature-card p {
+            color: var(--color-muted-foreground);
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* Pricing Section */
+        .pricing {
+            padding: 80px 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(245, 158, 11, 0.03) 100%);
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: #141414;
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            padding: 32px;
+            position: relative;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--color-primary);
+            background: linear-gradient(180deg, rgba(245, 158, 11, 0.05) 0%, #141414 100%);
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-primary);
+            color: #060606;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 999px;
+            letter-spacing: 0.05em;
+        }
+
+        .plan-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .plan-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .plan-price .amount {
+            font-size: 48px;
+            font-weight: 700;
+        }
+
+        .plan-price .period {
+            color: var(--color-muted-foreground);
+            font-size: 16px;
+        }
+
+        .plan-description {
+            color: var(--color-muted-foreground);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .plan-features li::before {
+            content: '✓';
+            color: var(--color-success);
+            font-weight: 600;
+        }
+
+        .pricing-card .btn-primary,
+        .pricing-card .btn-outline {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* Comparison Table */
+        .comparison {
+            padding: 80px 0;
+        }
+
+        .comparison-table {
+            background: #141414;
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .comparison-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 16px 24px;
+            text-align: center;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .comparison-table th:first-child,
+        .comparison-table td:first-child {
+            text-align: left;
+        }
+
+        .comparison-table th {
+            background: #0d0d0d;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .comparison-table td {
+            font-size: 14px;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table .check {
+            color: var(--color-success);
+            font-size: 18px;
+        }
+
+        .comparison-table .cross {
+            color: var(--color-danger);
+            font-size: 18px;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--color-border);
+            padding: 48px 0;
+        }
+
+        footer .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-links a {
+            color: var(--color-muted-foreground);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.15s;
+        }
+
+        .footer-links a:hover {
+            color: var(--color-foreground);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--color-foreground);
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .section-header h2 {
+                font-size: 28px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+
+            footer .container {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .delay-100 { animation-delay: 0.1s; }
+        .delay-200 { animation-delay: 0.2s; }
+        .delay-300 { animation-delay: 0.3s; }
+
+        /* Dashboard Styles */
+        .dashboard {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #0d0d0d;
+            border-right: 1px solid var(--color-border);
+            padding: 24px 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 12px;
+            margin-bottom: 32px;
+        }
+
+        .sidebar-nav {
+            list-style: none;
+        }
+
+        .sidebar-nav li {
+            margin-bottom: 4px;
+        }
+
+        .sidebar-nav a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: var(--color-muted-foreground);
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.15s;
+        }
+
+        .sidebar-nav a:hover,
+        .sidebar-nav a.active {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--color-primary);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 24px;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #060606;
+        }
+
+        .premium-badge {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: #060606;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: #141414;
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .stat-card h4 {
+            color: var(--color-muted-foreground);
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .stat-card .change {
+            font-size: 13px;
+            color: var(--color-success);
+            margin-top: 8px;
+        }
+
+        .api-key-section {
+            background: #141414;
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .api-key-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .api-key-box {
+            background: #0d0d0d;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 14px;
+        }
+
+        .api-key-box .key {
+            color: var(--color-primary);
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+                z-index: 100;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Premium Account Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: #141414;
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 480px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal h2 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .modal p {
+            color: var(--color-muted-foreground);
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0d0d0d;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            color: var(--color-foreground);
+            font-size: 14px;
+            transition: border-color 0.15s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .form-group input:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            color: var(--color-success);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landing-page">
+        <nav>
+            <div class="container">
+                <div class="logo">
+                    <div class="logo-icon">E</div>
+                    <span>EcomAgent</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#pricing">Pricing</a>
+                    <a href="#comparison">Compare</a>
+                    <a href="#" onclick="showDashboard(); return false;">Dashboard</a>
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn-outline" onclick="showLoginModal()">Sign In</button>
+                    <button class="btn-primary" onclick="showRegisterModal()">Get Started</button>
+                </div>
+                <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 12h18M3 6h18M3 18h18"/>
+                    </svg>
+                </button>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="badge animate-fade-in-up">
+                        <span>Free 7-day trial • No credit card required</span>
+                    </div>
+                    <h1 class="animate-fade-in-up delay-100">
+                        Unlimited <span>Claude API</span><br>Access for Claude Code
+                    </h1>
+                    <p class="hero-description animate-fade-in-up delay-200">
+                        Stop worrying about token limits and API costs. Get unlimited access to Claude Opus and Sonnet for a flat monthly price. Works with Claude Code out of the box.
+                    </p>
+                    <div class="hero-buttons animate-fade-in-up delay-300">
+                        <button class="btn-primary btn-large" onclick="showRegisterModal()">
+                            Start Free Trial
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                        <button class="btn-outline btn-large" onclick="showDashboard()">
+                            View Demo
+                        </button>
+                    </div>
+
+                    <div class="code-window animate-fade-in-up delay-300">
+                        <div class="code-titlebar">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <div class="code-content">
+                            <div><span class="comment"># Configure Claude Code to use EcomAgent</span></div>
+                            <div></div>
+                            <div>{</div>
+                            <div>  <span class="key">"api_key"</span>: <span class="string">"<span id="config-key">your-ecomagent-api-key</span>"</span>,</div>
+                            <div>  <span class="key">"endpoint"</span>: <span class="string">"https://api.ecomagent.in/v1"</span>,</div>
+                            <div>  <span class="key">"model"</span>: <span class="string">"claude-opus-4-5"</span></div>
+                            <div>}</div>
+                            <div></div>
+                            <div><span class="comment"># That's it! No rate limits, no token caps.</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features" id="features">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Everything You Need for AI Coding</h2>
+                    <p>Built for developers who demand reliability and unlimited usage</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Unlimited Tokens</h3>
+                        <p>No more worrying about token quotas. Code freely without monitoring your usage or hitting unexpected limits.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔑</div>
+                        <h3>Custom Endpoint</h3>
+                        <p>Drop-in replacement for Anthropic's API. Just update your config and you're ready to go.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h3>Claude Code Ready</h3>
+                        <p>Fully compatible with Claude Code. All models including Opus and Sonnet work seamlessly.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3>Flat Monthly Pricing</h3>
+                        <p>Predictable costs. Pay once, use unlimited. No surprise bills at the end of the month.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h3>Fast Response Times</h3>
+                        <p>Optimized infrastructure for low latency. Your coding sessions stay snappy and responsive.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>Enterprise Ready</h3>
+                        <p>Secure API access with rate limiting, usage analytics, and team management features.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="pricing" id="pricing">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Simple, Transparent Pricing</h2>
+                    <p>Choose the plan that fits your needs. All plans include unlimited tokens.</p>
+                </div>
+                <div class="pricing-grid">
+                    <div class="pricing-card">
+                        <div class="plan-name">Starter</div>
+                        <div class="plan-price">
+                            <span class="amount">$19</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Perfect for personal projects and trying out Claude Code.</p>
+                        <ul class="plan-features">
+                            <li>Unlimited Claude Sonnet access</li>
+                            <li>5 requests per minute</li>
+                            <li>Email support</li>
+                            <li>7-day free trial</li>
+                        </ul>
+                        <button class="btn-outline" onclick="showRegisterModal()">Get Started</button>
+                    </div>
+                    <div class="pricing-card featured">
+                        <div class="plan-name">Pro</div>
+                        <div class="plan-price">
+                            <span class="amount">$49</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Full access to all Claude models for professional development.</p>
+                        <ul class="plan-features">
+                            <li>Unlimited Claude Opus & Sonnet</li>
+                            <li>Unlimited requests per minute</li>
+                            <li>Priority support</li>
+                            <li>API usage dashboard</li>
+                            <li>7-day free trial</li>
+                        </ul>
+                        <button class="btn-primary" onclick="showRegisterModal()">Get Started</button>
+                    </div>
+                    <div class="pricing-card">
+                        <div class="plan-name">Team</div>
+                        <div class="plan-price">
+                            <span class="amount">$149</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">For teams that need shared access and collaboration features.</p>
+                        <ul class="plan-features">
+                            <li>Everything in Pro</li>
+                            <li>Up to 10 team members</li>
+                            <li>Shared API key</li>
+                            <li>Team usage analytics</li>
+                            <li>Dedicated support</li>
+                        </ul>
+                        <button class="btn-outline" onclick="showRegisterModal()">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="comparison" id="comparison">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Why EcomAgent?</h2>
+                    <p>See how we compare to using Anthropic's API directly.</p>
+                </div>
+                <div class="comparison-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Anthropic API</th>
+                                <th>EcomAgent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Token-based pricing</td>
+                                <td><span class="cross">✗</span></td>
+                                <td><span class="check">✓</span></td>
+                            </tr>
+                            <tr>
+                                <td>Unlimited usage</td>
+                                <td><span class="cross">✗</span></td>
+                                <td><span class="check">✓</span></td>
+                            </tr>
+                            <tr>
+                                <td>Predictable monthly cost</td>
+                                <td><span class="cross">✗</span></td>
+                                <td><span class="check">✓</span></td>
+                            </tr>
+                            <tr>
+                                <td>Claude Code compatible</td>
+                                <td><span class="check">✓</span></td>
+                                <td><span class="check">✓</span></td>
+                            </tr>
+                            <tr>
+                                <td>Free trial available</td>
+                                <td><span class="cross">✗</span></td>
+                                <td><span class="check">✓</span></td>
+                            </tr>
+                            <tr>
+                                <td>Usage dashboard</td>
+                                <td><span class="check">✓</span></td>
+                                <td><span class="check">✓</span></td>
+                            </tr>
+                            <tr>
+                                <td>Priority support</td>
+                                <td><span class="cross">✗</span></td>
+                                <td><span class="check">✓</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="container">
+                <div class="logo">
+                    <div class="logo-icon">E</div>
+                    <span>EcomAgent</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Contact</a>
+                </div>
+                <p style="color: var(--color-muted-foreground); font-size: 14px;">© 2024 EcomAgent. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard-page" style="display: none;">
+        <div class="dashboard">
+            <aside class="sidebar">
+                <div class="sidebar-logo">
+                    <div class="logo-icon">E</div>
+                    <span style="font-weight: 700;">EcomAgent</span>
+                </div>
+                <ul class="sidebar-nav">
+                    <li>
+                        <a href="#" class="active" onclick="showDashboard(); return false;">
+                            <span>📊</span> Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="showAPIKeys(); return false;">
+                            <span>🔑</span> API Keys
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="showUsage(); return false;">
+                            <span>📈</span> Usage
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="showBilling(); return false;">
+                            <span>💳</span> Billing
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="showSettings(); return false;">
+                            <span>⚙️</span> Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" onclick="showLanding(); return false;">
+                            <span>🏠</span> Home
+                        </a>
+                    </li>
+                </ul>
+            </aside>
+            <main class="main-content">
+                <div class="dashboard-header">
+                    <div>
+                        <h2 style="font-size: 24px; font-weight: 600;">Welcome back!</h2>
+                        <p style="color: var(--color-muted-foreground); font-size: 14px;">Here's your account overview</p>
+                    </div>
+                    <div class="user-menu">
+                        <span id="user-email" style="color: var(--color-muted-foreground); font-size: 14px;"></span>
+                        <span id="account-badge" class="premium-badge" style="display: none;">
+                            <span>⭐</span> Premium
+                        </span>
+                        <div class="user-avatar" id="user-avatar">?</div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>API Requests Today</h4>
+                        <div class="value" style="color: var(--color-primary);">247</div>
+                        <div class="change">↑ 12% from yesterday</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Tokens Used (This Month)</h4>
+                        <div class="value">2.4M</div>
+                        <div class="change">Unlimited on your plan</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Current Plan</h4>
+                        <div class="value" id="plan-name" style="font-size: 24px;">Pro</div>
+                        <div class="change">Renews in 23 days</div>
+                    </div>
+                    <div class="stat-card">
+                        <h4>API Status</h4>
+                        <div class="value" style="color: var(--color-success); font-size: 24px;">● Active</div>
+                        <div class="change">All systems operational</div>
+                    </div>
+                </div>
+
+                <div class="api-key-section">
+                    <h3>Your API Key</h3>
+                    <p style="color: var(--color-muted-foreground); font-size: 14px; margin-bottom: 16px;">
+                        Use this key in your Claude Code configuration to enable unlimited access.
+                    </p>
+                    <div class="api-key-box">
+                        <span class="key" id="api-key-display">sk-ecom-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</span>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-outline" style="padding: 8px 16px; font-size: 13px;" onclick="regenerateKey()">Regenerate</button>
+                            <button class="btn-primary" style="padding: 8px 16px; font-size: 13px;" onclick="copyApiKey()">Copy</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 32px;">
+                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px;">Quick Setup Guide</h3>
+                    <div class="code-window" style="margin-top: 0;">
+                        <div class="code-titlebar">
+                            <span class="code-dot red"></span>
+                            <span class="code-dot yellow"></span>
+                            <span class="code-dot green"></span>
+                        </div>
+                        <div class="code-content">
+                            <div><span class="comment"># 1. Create or edit your Claude Code config file:</span></div>
+                            <div><span style="color: var(--color-muted-foreground);"># ~/.claude/settings.json (macOS/Linux)</span></div>
+                            <div><span style="color: var(--color-muted-foreground);"># %USERPROFILE%\.claude\settings.json (Windows)</span></div>
+                            <div></div>
+                            <div><span class="comment"># 2. Add your EcomAgent API configuration:</span></div>
+                            <div>{</div>
+                            <div>  <span class="key">"apiKey"</span>: <span class="string">"<span id="setup-key" style="color: var(--color-primary);">sk-ecom-xxxxxxxx</span>"</span>,</div>
+                            <div>  <span class="key">"baseUrl"</span>: <span class="string">"https://api.ecomagent.in/v1/messages"</span></div>
+                            <div>}</div>
+                            <div></div>
+                            <div><span class="comment"># 3. Start using Claude Code with unlimited access!</span></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div class="modal-overlay" id="register-modal">
+        <div class="modal">
+            <h2>Create Your Account</h2>
+            <p>Start your 7-day free trial. No credit card required.</p>
+            <div id="register-success" class="success-message" style="display: none;">
+                ✓ Account created successfully! Premium access granted to your email.
+            </div>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="register-email">Email Address</label>
+                    <input type="email" id="register-email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" placeholder="Create a password" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 14px;">
+                    Create Account & Get Premium
+                </button>
+            </form>
+            <p style="text-align: center; margin-top: 16px; font-size: 13px;">
+                Already have an account? <a href="#" onclick="showLoginModal(); return false;" style="color: var(--color-primary);">Sign In</a>
+            </p>
+            <button onclick="closeModal('register-modal')" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--color-muted-foreground); cursor: pointer; font-size: 20px;">×</button>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="login-modal">
+        <div class="modal">
+            <h2>Welcome Back</h2>
+            <p>Sign in to access your EcomAgent account.</p>
+            <div id="login-success" class="success-message" style="display: none;">
+                ✓ Login successful! Welcome back.
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 14px;">
+                    Sign In
+                </button>
+            </form>
+            <p style="text-align: center; margin-top: 16px; font-size: 13px;">
+                Don't have an account? <a href="#" onclick="showRegisterModal(); return false;" style="color: var(--color-primary);">Sign Up</a>
+            </p>
+            <button onclick="closeModal('login-modal')" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--color-muted-foreground); cursor: pointer; font-size: 20px;">×</button>
+        </div>
+    </div>
+
+    <!-- Premium Account Modal -->
+    <div class="modal-overlay" id="premium-modal">
+        <div class="modal">
+            <div style="text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 16px;">⭐</div>
+                <h2>Premium Account Activated</h2>
+                <p id="premium-email"></p>
+            </div>
+            <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 8px; padding: 16px; margin: 24px 0; text-align: center;">
+                <div style="color: var(--color-success); font-weight: 600; margin-bottom: 4px;">✓ Full Access Granted</div>
+                <div style="color: var(--color-muted-foreground); font-size: 14px;">Unlimited Claude Opus & Sonnet Access</div>
+            </div>
+            <button class="btn-primary" style="width: 100%; justify-content: center; padding: 14px;" onclick="closeModal('premium-modal'); showDashboard();">
+                Go to Dashboard
+            </button>
+            <button onclick="closeModal('premium-modal')" style="position: absolute; top: 16px; right: 16px; background: none; border: none; color: var(--color-muted-foreground); cursor: pointer; font-size: 20px;">×</button>
+        </div>
+    </div>
+
+    <script>
+        // Premium accounts list (simulated database)
+        const premiumAccounts = [
+            'devos.senne250@gmail.com',
+            'admin@ecomagent.in',
+            'demo@example.com'
+        ];
+
+        // Current user state
+        let currentUser = null;
+
+        // Check if email is premium
+        function isPremiumEmail(email) {
+            return premiumAccounts.includes(email.toLowerCase());
+        }
+
+        // Generate API key
+        function generateApiKey() {
+            const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+            let key = 'sk-ecom-';
+            for (let i = 0; i < 32; i++) {
+                key += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return key;
+        }
+
+        // Generate random API key for display
+        const userApiKey = generateApiKey();
+
+        // Show/hide pages
+        function showLanding() {
+            document.getElementById('landing-page').style.display = 'block';
+            document.getElementById('dashboard-page').style.display = 'none';
+        }
+
+        function showDashboard() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('dashboard-page').style.display = 'block';
+            updateDashboard();
+        }
+
+        // Update dashboard with user info
+        function updateDashboard() {
+            if (currentUser) {
+                document.getElementById('user-email').textContent = currentUser.email;
+                document.getElementById('user-avatar').textContent = currentUser.email[0].toUpperCase();
+
+                if (currentUser.isPremium) {
+                    document.getElementById('account-badge').style.display = 'flex';
+                }
+            } else {
+                document.getElementById('user-email').textContent = 'Guest User';
+                document.getElementById('user-avatar').textContent = 'G';
+            }
+        }
+
+        // Modal functions
+        function showRegisterModal() {
+            closeModal('login-modal');
+            document.getElementById('register-modal').classList.add('active');
+            document.getElementById('register-success').style.display = 'none';
+        }
+
+        function showLoginModal() {
+            closeModal('register-modal');
+            document.getElementById('login-modal').classList.add('active');
+            document.getElementById('login-success').style.display = 'none';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Handle registration
+        function handleRegister(event) {
+            event.preventDefault();
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+
+            // Check if premium
+            const isPremium = isPremiumEmail(email);
+
+            currentUser = {
+                email: email,
+                password: password,
+                isPremium: isPremium,
+                apiKey: generateApiKey(),
+                plan: isPremium ? 'Pro' : 'Starter'
+            };
+
+            // Show success message
+            document.getElementById('register-success').style.display = 'block';
+
+            if (isPremium) {
+                // Show premium modal for premium accounts
+                setTimeout(() => {
+                    closeModal('register-modal');
+                    document.getElementById('premium-email').textContent = `Account: ${email}`;
+                    document.getElementById('premium-modal').classList.add('active');
+                }, 1500);
+            } else {
+                // Auto-login for regular accounts
+                setTimeout(() => {
+                    closeModal('register-modal');
+                    showDashboard();
+                }, 1500);
+            }
+        }
+
+        // Handle login
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            // Check if premium
+            const isPremium = isPremiumEmail(email);
+
+            currentUser = {
+                email: email,
+                password: password,
+                isPremium: isPremium,
+                apiKey: generateApiKey(),
+                plan: isPremium ? 'Pro' : 'Starter'
+            };
+
+            // Show success message
+            document.getElementById('login-success').style.display = 'block';
+
+            setTimeout(() => {
+                closeModal('login-modal');
+                showDashboard();
+            }, 1000);
+        }
+
+        // Copy API key
+        function copyApiKey() {
+            navigator.clipboard.writeText(userApiKey).then(() => {
+                alert('API key copied to clipboard!');
+            });
+        }
+
+        // Regenerate API key
+        function regenerateKey() {
+            if (confirm('Are you sure you want to regenerate your API key? Your old key will stop working immediately.')) {
+                location.reload();
+            }
+        }
+
+        // Close modals when clicking outside
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update config display with actual API key format
+            const keyDisplay = userApiKey.substring(0, 20) + '...';
+            document.getElementById('config-key').textContent = keyDisplay;
+            document.getElementById('api-key-display').textContent = userApiKey;
+            document.getElementById('setup-key').textContent = keyDisplay;
+        });
+    </script>
+</body>
+</html>
