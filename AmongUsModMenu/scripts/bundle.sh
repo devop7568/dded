@@ -31,7 +31,7 @@ for abi in arm64-v8a armeabi-v7a; do
 done
 
 echo "[5/6] rebuilding APK..."
-java -jar tools/apktool.jar b --use-aapt2 "$WORK/dec" -o "$WORK/unsigned.apk"
+java -jar tools/apktool.jar b "$WORK/dec" -o "$WORK/unsigned.apk"
 zipalign -p -f 4 "$WORK/unsigned.apk" "$WORK/aligned.apk"
 
 echo "[6/6] signing..."
