@@ -1,0 +1,117 @@
+name: Build Among Us Modded APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      xapk_url:
+        description: 'Direct URL (or Google Drive share link) to Among Us .xapk'
+        required: true
+        default: 'https://drive.google.com/file/d/1K9hARaczrHPPU-JKhxibv1VSZZgqA7kw/view?usp=sharing'
+      impostor_chance:
+        description: 'Impostor % (0-100)'
+        required: false
+        default: '80'
+      impostor_role:
+        description: 'Sub-role: 1=Viper 2=Shapeshifter 3=Phantom'
+        required: false
+        default: '2'
+      vision_scale:
+        description: 'Vision multiplier'
+        required: false
+        default: '2.0'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show preinstalled NDK
+        run: |
+          echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT"
+          ls "$ANDROID_NDK_ROOT" | head
+          "$ANDROID_NDK_ROOT/ndk-build" --version
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install apktool + zipalign + gdown
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y apktool zipalign apksigner
+          python3 -m pip install --quiet gdown
+
+      - name: Apply user-configured defaults to config.h
+        run: |
+          cd AmongUsModMenu
+          sed -i "s/impostorChance{80}/impostorChance{${{ github.event.inputs.impostor_chance }}}/" jni/config.h
+          sed -i "s/impostorRole{2}/impostorRole{${{ github.event.inputs.impostor_role }}}/"       jni/config.h
+          sed -i "s/visionScale{2\.0f}/visionScale{${{ github.event.inputs.vision_scale }}f}/"    jni/config.h
+          grep -E "impostorChance|impostorRole|visionScale" jni/config.h
+
+      - name: Fetch dependencies
+        run: |
+          cd AmongUsModMenu
+          bash scripts/setup.sh
+
+      - name: Build libmodmenu.so
+        run: |
+          cd AmongUsModMenu
+          export NDK_HOME="$ANDROID_NDK_ROOT"
+          bash scripts/build.sh
+
+      - name: Download XAPK from Drive
+        run: |
+          cd AmongUsModMenu
+          mkdir -p .xapk
+          URL='${{ github.event.inputs.xapk_url }}'
+          # Try gdown first (Drive-aware), fall back to curl
+          if echo "$URL" | grep -q 'drive.google.com'; then
+            FID=$(echo "$URL" | grep -oE '/d/[^/]+' | cut -d/ -f3)
+            gdown --fuzzy -O .xapk/AmongUs.xapk "$URL" || \
+            gdown -O .xapk/AmongUs.xapk "$FID"
+          else
+            curl -L -o .xapk/AmongUs.xapk "$URL"
+          fi
+          ls -la .xapk
+
+      - name: Dump fresh il2cpp offsets
+        run: |
+          cd AmongUsModMenu
+          # Il2CppDumper (dotnet build)
+          sudo apt-get install -y dotnet-sdk-8.0 unzip
+          mkdir -p tools
+          curl -L -o tools/Il2CppDumper.zip \
+            https://github.com/Perfare/Il2CppDumper/releases/latest/download/Il2CppDumper-net8-linux-x64.zip
+          unzip -o tools/Il2CppDumper.zip -d tools/dumper
+          # symlink expected name for dump script
+          ln -sf "$(pwd)/tools/dumper/Il2CppDumper.dll" tools/Il2CppDumper.dll || true
+          bash scripts/dump_offsets.sh .xapk/AmongUs.xapk || echo "dump failed, keeping baked offsets"
+          # Rebuild in case offsets.h changed
+          bash scripts/build.sh
+
+      - name: Bundle modded APK
+        run: |
+          cd AmongUsModMenu
+          bash scripts/bundle.sh .xapk/AmongUs.xapk
+          ls -la AmongUs_modded.apk
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AmongUs_modded_apk
+          path: AmongUsModMenu/AmongUs_modded.apk
+          retention-days: 30
+
+      - name: Upload libmodmenu.so (fallback)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: libmodmenu_so
+          path: AmongUsModMenu/libs/**/libmodmenu.so
+          if-no-files-found: warn
+          retention-days: 30
