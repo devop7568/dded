@@ -25,6 +25,8 @@ namespace Cfg {
     inline std::atomic<bool>  antiTimeout{true};   // suppress self-leave report
     inline std::atomic<bool>  antiBan{true};       // block Innersloth reputation flag
 
-    // ---- Chat: never touched ----
-    // (No hooks on ChatController / HudManager.Chat.*)
+    // ---- Chat ----
+    // Free chat: bypass gates so you can chat while dead, outside meetings, muted, moving.
+    // We don't touch the send path itself — only the "can I type right now" checks.
+    inline std::atomic<bool>  freeChat{true};
 }

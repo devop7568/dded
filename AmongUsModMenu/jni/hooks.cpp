@@ -164,6 +164,16 @@ namespace {
         }
         return r;
     }
+
+    // Free chat — every candidate gate says "yes, you can chat".
+    bool  (*o_HudManager_get_IsChatEnabled)(void*)                = nullptr;
+    bool  (*o_ChatController_get_IsOpen)(void*)                   = nullptr;
+    bool  (*o_PC_Data_get_IsDead_forChat)(void*)                  = nullptr;
+
+    bool hk_HudManager_IsChatEnabled(void* self) {
+        if (Cfg::freeChat.load()) return true;
+        return o_HudManager_get_IsChatEnabled(self);
+    }
 }
 
 namespace Hooks {
@@ -188,8 +198,8 @@ void Install() {
     BIND("GameData", "PlayerInfo", "get_IsImpostor", 0, hk_PC_Data_get_IsImpostor, o_PC_Data_get_IsImpostor);
     BIND("InnerNet","InnerNetClient", "OnPlayerLeft", 2, hk_AmongUsClient_OnPlayerLeft, o_AmongUsClient_OnPlayerLeft);
     BIND("", "HudManager",      "Update",        0, hk_HudManager_Update,       o_HudManager_Update);
+    BIND("", "HudManager",      "get_IsChatEnabled", 0, hk_HudManager_IsChatEnabled, o_HudManager_get_IsChatEnabled);
 
-    // ChatController.AddChat NOT hooked — chat behavior stays 100% vanilla.
     #undef BIND
 }
 

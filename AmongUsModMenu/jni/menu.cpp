@@ -66,8 +66,14 @@ namespace {
             if (ImGui::Checkbox("Anti-ban (drop reputation flag)",   &ab)) Cfg::antiBan = ab;
         }
 
+        // ---- Chat ----
+        if (ImGui::CollapsingHeader("Chat", ImGuiTreeNodeFlags_DefaultOpen)) {
+            bool fc = Cfg::freeChat.load();
+            if (ImGui::Checkbox("Free chat (dead / meeting / muted / moving)", &fc)) Cfg::freeChat = fc;
+        }
+
         ImGui::Separator();
-        ImGui::TextDisabled("Chat: untouched.  Long-press ⚙ to hide.");
+        ImGui::TextDisabled("Tap N to hide.");
         ImGui::End();
     }
 
