@@ -6,7 +6,7 @@
 #include <mutex>
 #include <random>
 #include <android/log.h>
-#include "And64InlineHook.h"
+#include "And64InlineHook.hpp"
 
 #define LOG(...) __android_log_print(ANDROID_LOG_INFO, "AUModMenu", __VA_ARGS__)
 
