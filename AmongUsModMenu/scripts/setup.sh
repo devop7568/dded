@@ -12,7 +12,6 @@ fetch() {
 }
 
 fetch imgui              https://github.com/ocornut/imgui.git                       docking
-fetch KittyMemory        https://github.com/MJx0/KittyMemory.git                    master
 fetch And64InlineHook    https://github.com/Rprop/And64InlineHook.git               master
 
 # apktool + apksigner detection
