@@ -79,20 +79,29 @@ jobs:
           fi
           ls -la .xapk
 
-      - name: Dump fresh il2cpp offsets
+      - name: Dump fresh il2cpp offsets (best-effort)
+        continue-on-error: true
         run: |
           cd AmongUsModMenu
-          # Il2CppDumper (dotnet build)
-          sudo apt-get install -y dotnet-sdk-8.0 unzip
+          set +e
+          sudo apt-get install -y dotnet-sdk-8.0 unzip >/dev/null
           mkdir -p tools
-          curl -L -o tools/Il2CppDumper.zip \
-            https://github.com/Perfare/Il2CppDumper/releases/latest/download/Il2CppDumper-net8-linux-x64.zip
-          unzip -o tools/Il2CppDumper.zip -d tools/dumper
-          # symlink expected name for dump script
-          ln -sf "$(pwd)/tools/dumper/Il2CppDumper.dll" tools/Il2CppDumper.dll || true
-          bash scripts/dump_offsets.sh .xapk/AmongUs.xapk || echo "dump failed, keeping baked offsets"
-          # Rebuild in case offsets.h changed
-          bash scripts/build.sh
+          # Try a few Il2CppDumper release asset names — filename varies per release
+          BASE="https://github.com/Perfare/Il2CppDumper/releases/latest/download"
+          for name in \
+              "Il2CppDumper-net8-linux-x64.zip" \
+              "Il2CppDumper-net6-linux-x64.zip" \
+              "Il2CppDumper-linux-x64.zip"; do
+              curl -fL -o tools/Il2CppDumper.zip "$BASE/$name" && break
+          done
+          if [ -s tools/Il2CppDumper.zip ] && unzip -tq tools/Il2CppDumper.zip >/dev/null 2>&1; then
+              unzip -o tools/Il2CppDumper.zip -d tools/dumper
+              ln -sf "$(pwd)/tools/dumper/Il2CppDumper.dll" tools/Il2CppDumper.dll || true
+              bash scripts/dump_offsets.sh .xapk/AmongUs.xapk && bash scripts/build.sh
+          else
+              echo "[!] Il2CppDumper unavailable — using baked v2026.6.5 offsets."
+          fi
+          exit 0
 
       - name: Bundle modded APK
         run: |
