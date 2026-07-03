@@ -21,4 +21,8 @@ mkdir -p tools
 [ -f tools/uber-apk-signer.jar ] || curl -L -o tools/uber-apk-signer.jar \
     https://github.com/patrickfav/uber-apk-signer/releases/download/v1.3.0/uber-apk-signer-1.3.0.jar
 
+echo
+echo "[i] jni/And64InlineHook tree:"
+ls "$JNI/And64InlineHook" 2>/dev/null || true
+echo
 echo "[✓] setup complete"

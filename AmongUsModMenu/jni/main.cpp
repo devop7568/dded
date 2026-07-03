@@ -39,7 +39,7 @@ namespace {
     }
 }
 
-#include "And64InlineHook/And64InlineHook.h"
+#include "And64InlineHook.h"
 
 static void MainThread() {
     if (!IL2CPP::Init()) { LOG("il2cpp init failed"); return; }
